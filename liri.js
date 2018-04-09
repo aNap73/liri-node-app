@@ -1,7 +1,14 @@
 require("dotenv").config();
+//var chromeLauncher = require('chrome-launcher');
 
+var moment = require('moment');
 var keys = require("./keys.js");
-
+var Spotify = require('node-spotify-api');
+//require("node-spotify-api")
+var spotify = new Spotify({
+  id: keys.spotify.id,
+  secret: keys.spotify.secret
+});
 
 var Twitter = require('twitter');
 var client = new Twitter({
@@ -11,15 +18,17 @@ var client = new Twitter({
   access_token_secret: keys.twitter.access_token_secret
 }); 
 
-var fnTweets = function(){
-  console.log('tweet!' );  
-  var params = {screen_name: 'LiriJustice', count: 20};
+var fnTweets = function(srch){
+  if (!srch){
+    srch = 'Liri Justice'
+  }
+  var params = {screen_name: srch, count: 20};
   client.get('statuses/user_timeline', params, function(error, tweets, response) {
-   
+    //console.log(tweets[0]);
     if (!error) {
       for (var tweet in tweets)
-      {
-        console.log(tweets[tweet].text);
+      {             
+        console.log(srch + '@' + moment(tweets[tweet].created_at).format('LLLL') + ':    ' + tweets[tweet].text + ' ' );
       }
       
     }
@@ -27,8 +36,87 @@ var fnTweets = function(){
   
 };
 var fnSpot = function(srch){
-  console.log('Spot! ' + srch );
+
+
+  //    * This will show the following information about the song in your terminal/bash window
+     
+//      * Artist(s)
+     
+//      * The song's name
+     
+//      * A preview link of the song from Spotify
+     
+//      * The album that the song is from
+//      * If no song is provided then your program will default to "The Sign" by Ace of Base.
+if(!srch){
+  //If no song
+  fnSpotErr();
+  return;
+}
+srch = '"' + srch + '"'
+spotify.search(
+    { type: 'track', query: srch }, 
+    function(err, data) {
+        if (err) {
+        //If no song   
+  
+        fnSpotErr();
+        return;
+         }
+        
+        if(!data.tracks.items[0].album.artists[0].name||
+           !data.tracks.items[0].album.name||
+           !data.tracks.items[0].name||
+           !data.tracks.items[0].preview_url)
+        {
+          //If no song
+           fnSpotErr();
+           return;
+         }  
+        if(!data.tracks.items[0].name){
+          //If no song
+           fnSpotErr();
+           return;
+         }
+         try{
+          console.log('Artists: ' + JSON.stringify(data.tracks.items[0].album.artists[0].name,null,2));
+          console.log('Album Name: ' + JSON.stringify(data.tracks.items[0].album.name,null,2));
+          console.log('Song: ' + JSON.stringify(data.tracks.items[0].name,null,2));
+          console.log('Preview: ' + JSON.stringify(data.tracks.items[0].preview_url,null,2));
+          }catch(err){
+            fnSpotErr();
+            return;
+          }  
+})};
+
+
+var fnSpotErr = function(){
+  
+    try {
+      let srch = '"The Sign"';
+    spotify.search({ type: 'track', query: srch }, 
+                     function(err, data) {
+      if (err) {   
+        console.log('Error : ' + err);
+        return;
+      }
+      try{
+        let cnt = 0;
+      console.log('Artists: ' + JSON.stringify(data.tracks.items[cnt].album.artists[0].name,null,2));
+      console.log('Album Name: ' + JSON.stringify(data.tracks.items[cnt].album.name,null,2));
+      console.log('Song: ' + JSON.stringify(data.tracks.items[cnt].name,null,2));
+      console.log('Preview: ' + JSON.stringify(data.tracks.items[cnt].preview_url,null,2));
+      }catch(err){
+        console.log('Error : ' + err);
+        return;
+      } })
+}catch(err){
+  console.log('Error : ' + err);
+  return;
+}
 };
+
+
 var fnMovie = function(srch){
   console.log('Movie! ' + srch );
 };
@@ -44,7 +132,7 @@ if(!command){
 switch(command)
 {
   case 'my-tweets':
-    fnTweets();
+    fnTweets(arguments);
     break;
   case 'spotify-this-song':
     fnSpot(arguments);
