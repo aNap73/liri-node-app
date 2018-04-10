@@ -167,7 +167,8 @@ var fnDoWhat = function(){
     
     arg = arg.substring(0,arg.length-1);
     if(cmd){
-    processcommand(cmd,arg);
+      if(cmd.length>5){processcommand(cmd,arg);}
+    
     }
   }
   }});
@@ -194,7 +195,7 @@ var processcommand = function (command,arguments){
       fnDoWhat();
       break;
     default:
-      console.log('Invalid Commad: '  + command);
+      console.log('Invalid Command: '  + command);
       console.log('VALID COMMANDS:');
       console.log('  my-tweets <@USER NAME>         - Displays last 20 tweets');
       console.log('  spotify-this-song <SONG NAME>   - Song info ');
