@@ -6,21 +6,21 @@ After cloning this project from git.hub you will need to follow these steps:
 2) you will need to create api accounts at spotify and twitter
 3) you will need to create a .env file with the following in it:
 
-SPOTIFY_ID=<yourvalueshere>
-SPOTIFY_SECRET=<yourvalueshere>	
-TWITTER_CONSUMER_KEY=<yourvalueshere>
-TWITTER_CONSUMER_SECRET=<yourvalueshere>
-TWITTER_ACCESS_TOKEN_KEY=<yourvalueshere>
-TWITTER_ACCESS_TOKEN_SECRET=<yourvalueshere>
+SPOTIFY_ID=`yourvalueshere`
+SPOTIFY_SECRET=`yourvalueshere`	
+TWITTER_CONSUMER_KEY=`yourvalueshere`
+TWITTER_CONSUMER_SECRET=`yourvalueshere`
+TWITTER_ACCESS_TOKEN_KEY=`yourvalueshere`
+TWITTER_ACCESS_TOKEN_SECRET=`yourvalueshere`
 
 ###USING LIRI
 This application is a command line node app that has 5 functions:
 
 VALID COMMANDS:
-  my-tweets <@USER NAME>         - Displays last 20 tweets
-  spotify-this-song <SONG NAME>   - Song info
-  movie-this <MOVIE NAME>         - Movie info
-  do-what-it-says <NO ARGUMENT>   - follows commands in random.txt
+  my-tweets `@USER NAME`         - Displays last 20 tweets
+  spotify-this-song `SONG NAME`   - Song info
+  movie-this `MOVIE NAME`         - Movie info
+  do-what-it-says `NO ARGUMENT`   - follows commands in random.txt
 
 to access a function you may type in console for example:
 
