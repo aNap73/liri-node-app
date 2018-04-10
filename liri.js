@@ -1,3 +1,4 @@
+var fs = require('fs');
 var request = require('request');
 require("dotenv").config();
 //taken out as an instructor conscideration. -ant
@@ -22,8 +23,8 @@ var fnTweets = function(srch){
   }
   var params = {screen_name: srch, count: 20};
   client.get('statuses/user_timeline', params, function(error, tweets, response) {
-    //console.log(tweets[0]);
-    console.log(tweets[0].created_at);
+    
+    //console.log(tweets[0].created_at);
     if (!error) {
       for (var tweet in tweets)
       {             
@@ -51,7 +52,7 @@ if(!srch){
   fnSpotErr();
   return;
 }
-srch = '"' + srch + '"';
+//srch = '"' + srch + '"';
 
 spotify.search(
     { type: 'track', query: srch }, 
@@ -65,7 +66,10 @@ spotify.search(
          let bFound = false;     
          try{
           for(var trk in data.tracks.items){
-            if('"' + data.tracks.items[trk].name + '"' === srch){
+            // console.log('"' + data.tracks.items[trk].name +'"');
+            // console.log('"' + srch.substring(0,srch.length-1) +'"');
+            
+            if(data.tracks.items[trk].name  === srch){
               console.log('Artists: ' + JSON.stringify(data.tracks.items[trk].album.artists[0].name,null,2));
               console.log('Song: ' + JSON.stringify(data.tracks.items[trk].name,null,2));
               console.log('Preview: ' + JSON.stringify(data.tracks.items[trk].preview_url,null,2));
@@ -81,12 +85,11 @@ spotify.search(
             return;
           }  
           if(!bFound){
+            console.log('NOT FOUND');
             fnSpotErr();
             return;
           }
 })};
-
-
 var fnSpotErr = function(){
     try {
       let srch = '"The Sign"';
@@ -147,36 +150,63 @@ var fnMovie = function(srch){
   });
 };
 var fnDoWhat = function(){
-  console.log('Do What!' );
+  fs.readFile('./random.txt','utf8', function(err, data) {
+  var arrData = data.split('\n');
+  for (var wrk in arrData){
+    if(arrData[wrk].indexOf(',')<0){
+      arrData[wrk] += ",";
+    }
+    var arrPair = arrData[wrk].split(',');
+    
+    if(!arrPair[1]){
+      arrPair[1]='""';
+    } 
+    if(arrPair[1]){
+    let cmd = arrPair[0];
+    let arg = arrPair[1].split('"').join('');
+    
+    arg = arg.substring(0,arg.length-1);
+    if(cmd){
+    processcommand(cmd,arg);
+    }
+  }
+  }});
+  
 };
+var processcommand = function (command,arguments){
+
+  if(!command){
+    
+    command="invalid"; 
+  };
+  switch(command)
+  {
+    case 'my-tweets':
+      fnTweets(arguments);
+      break;
+    case 'spotify-this-song':
+      fnSpot(arguments);
+      break;
+    case 'movie-this':
+      fnMovie(arguments);
+      break;
+    case 'do-what-it-says':
+      fnDoWhat();
+      break;
+    default:
+      console.log('Invalid Commad: '  + command);
+      console.log('VALID COMMANDS:');
+      console.log('  my-tweets <@USER NAME>         - Displays last 20 tweets');
+      console.log('  spotify-this-song <SONG NAME>   - Song info ');
+      console.log('  movie-this <MOVIE NAME>         - Movie info');
+      console.log('  do-what-it-says <NO ARGUMENT>   - follows commands in random.txt');
+      break;
+  }
+}
+
 var command = process.argv[2];
 var arguments = process.argv.slice(3).join(' '); 
-if(!command){
-  command="invalid"; 
-};
-switch(command)
-{
-  case 'my-tweets':
-    fnTweets(arguments);
-    break;
-  case 'spotify-this-song':
-    fnSpot(arguments);
-    break;
-  case 'movie-this':
-    fnMovie(arguments);
-    break;
-  case 'do-what-it-says':
-    fnDoWhat();
-    break;
-  default:
-    console.log('Invalid Command...');
-    console.log('VALID COMMANDS:');
-    console.log('  my-tweets <@USER NAME>         - Displays last 20 tweets');
-    console.log('  spotify-this-song <SONG NAME>   - Song info ');
-    console.log('  movie-this <MOVIE NAME>         - Movie info');
-    console.log('  do-what-it-says <NO ARGUMENT>   - follows commands in random.txt');
-    break;
-}
+processcommand(command, arguments);
 
 
 // 10. Make it so liri.js can take in one of the following commands:
