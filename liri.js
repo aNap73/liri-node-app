@@ -51,37 +51,51 @@ if(!srch){
   fnSpotErr();
   return;
 }
-srch = '"' + srch + '"'
+srch = '"' + srch + '"';
+
 spotify.search(
     { type: 'track', query: srch }, 
     function(err, data) {
         if (err) {
         //If no song   
-  
+        console.log(err);
         fnSpotErr();
         return;
          }
         
-        if(!data.tracks.items[0].album.artists[0].name||
-           !data.tracks.items[0].album.name||
-           !data.tracks.items[0].name||
-           !data.tracks.items[0].preview_url)
-        {
-          //If no song
-           fnSpotErr();
-           return;
-         }  
-        if(!data.tracks.items[0].name){
-          //If no song
-           fnSpotErr();
-           return;
-         }
+        // if(!data.tracks.items[0].album.artists[0].name||
+        //    !data.tracks.items[0].album.name||
+        //    !data.tracks.items[0].name||
+        //    !data.tracks.items[0].preview_url)
+        // {
+        //   //If no song
+        //   //console.log('')
+        //    fnSpotErr();
+        //    return;
+        //  }  
+        // if(!data.tracks.items[0].name){
+        //   //If no song
+        //    fnSpotErr();
+        //    return;
+        //  }
+        
          try{
-          console.log('Artists: ' + JSON.stringify(data.tracks.items[0].album.artists[0].name,null,2));
-          console.log('Album Name: ' + JSON.stringify(data.tracks.items[0].album.name,null,2));
-          console.log('Song: ' + JSON.stringify(data.tracks.items[0].name,null,2));
-          console.log('Preview: ' + JSON.stringify(data.tracks.items[0].preview_url,null,2));
+          for(var trk in data.tracks.items){
+        
+            if('"' + data.tracks.items[trk].name + '"' === srch){
+              console.log('Artists: ' + JSON.stringify(data.tracks.items[trk].album.artists[0].name,null,2));
+              console.log('Song: ' + JSON.stringify(data.tracks.items[trk].name,null,2));
+              console.log('Preview: ' + JSON.stringify(data.tracks.items[trk].preview_url,null,2));
+              console.log('Album Name: ' + JSON.stringify(data.tracks.items[trk].album.name,null,2));
+              break;
+            }
+          }
+          //console.log(data.tracks.items[1].name);
+
+          
+          
           }catch(err){
+            console.log(err);
             fnSpotErr();
             return;
           }  
@@ -100,10 +114,10 @@ var fnSpotErr = function(){
       }
       try{
         let cnt = 0;
-      console.log('Artists: ' + JSON.stringify(data.tracks.items[cnt].album.artists[0].name,null,2));
-      console.log('Album Name: ' + JSON.stringify(data.tracks.items[cnt].album.name,null,2));
-      console.log('Song: ' + JSON.stringify(data.tracks.items[cnt].name,null,2));
-      console.log('Preview: ' + JSON.stringify(data.tracks.items[cnt].preview_url,null,2));
+        console.log('Artists: ' + JSON.stringify(data.tracks.items[0].album.artists[0].name,null,2));
+        console.log('Song: ' + JSON.stringify(data.tracks.items[0].name,null,2));
+        console.log('Preview: ' + JSON.stringify(data.tracks.items[0].preview_url,null,2));
+        console.log('Album Name: ' + JSON.stringify(data.tracks.items[0].album.name,null,2));
       }catch(err){
         console.log('Error : ' + err);
         return;
@@ -146,14 +160,11 @@ var fnMovie = function(srch){
     console.log('Plot:', bdyjson.Plot);
     //        * Actors in the movie.
     console.log('Actors:', bdyjson.Actors);    
-    
-        
-});
+  });
 };
 var fnDoWhat = function(){
   console.log('Do What!' );
 };
-
 var command = process.argv[2];
 var arguments = process.argv.slice(3).join(' '); 
 if(!command){
@@ -176,11 +187,11 @@ switch(command)
   default:
     console.log('Invalid Command...');
     console.log('VALID COMMANDS:');
-    console.log('  my-tweets <NO ARGUMENT>         - Displays last 20 tweets');
+    console.log('  my-tweets <@USER NAME>         - Displays last 20 tweets');
     console.log('  spotify-this-song <SONG NAME>   - Song info ');
     console.log('  movie-this <MOVIE NAME>         - Movie info');
     console.log('  do-what-it-says <NO ARGUMENT>   - follows commands in random.txt');
-    return
+    
     break;
 }
 
