@@ -13,6 +13,8 @@ TWITTER_CONSUMER_SECRET=`yourvalueshere`
 TWITTER_ACCESS_TOKEN_KEY=`yourvalueshere`
 TWITTER_ACCESS_TOKEN_SECRET=`yourvalueshere`
 
+4) replace `yourvalueshere` with your api values from Spotify and Twitter.
+
 ###USING LIRI
 This application is a command line node app that has 5 functions:
 
