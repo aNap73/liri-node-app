@@ -62,48 +62,32 @@ spotify.search(
         fnSpotErr();
         return;
          }
-        
-        // if(!data.tracks.items[0].album.artists[0].name||
-        //    !data.tracks.items[0].album.name||
-        //    !data.tracks.items[0].name||
-        //    !data.tracks.items[0].preview_url)
-        // {
-        //   //If no song
-        //   //console.log('')
-        //    fnSpotErr();
-        //    return;
-        //  }  
-        // if(!data.tracks.items[0].name){
-        //   //If no song
-        //    fnSpotErr();
-        //    return;
-        //  }
-        
+         let bFound = false;     
          try{
           for(var trk in data.tracks.items){
-        
             if('"' + data.tracks.items[trk].name + '"' === srch){
               console.log('Artists: ' + JSON.stringify(data.tracks.items[trk].album.artists[0].name,null,2));
               console.log('Song: ' + JSON.stringify(data.tracks.items[trk].name,null,2));
               console.log('Preview: ' + JSON.stringify(data.tracks.items[trk].preview_url,null,2));
               console.log('Album Name: ' + JSON.stringify(data.tracks.items[trk].album.name,null,2));
+              bFound = true;
               break;
             }
           }
-          //console.log(data.tracks.items[1].name);
-
-          
           
           }catch(err){
             console.log(err);
             fnSpotErr();
             return;
           }  
+          if(!bFound){
+            fnSpotErr();
+            return;
+          }
 })};
 
 
 var fnSpotErr = function(){
-  
     try {
       let srch = '"The Sign"';
       spotify.search({ type: 'track', query: srch }, 
@@ -191,7 +175,6 @@ switch(command)
     console.log('  spotify-this-song <SONG NAME>   - Song info ');
     console.log('  movie-this <MOVIE NAME>         - Movie info');
     console.log('  do-what-it-says <NO ARGUMENT>   - follows commands in random.txt');
-    
     break;
 }
 
