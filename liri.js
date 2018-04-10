@@ -1,23 +1,21 @@
+var request = require('request');
 require("dotenv").config();
+//taken out as an instructor conscideration. -ant
 //var chromeLauncher = require('chrome-launcher');
 
-var moment = require('moment');
 var keys = require("./keys.js");
 var Spotify = require('node-spotify-api');
-//require("node-spotify-api")
 var spotify = new Spotify({
   id: keys.spotify.id,
   secret: keys.spotify.secret
 });
-
 var Twitter = require('twitter');
 var client = new Twitter({
   consumer_key: keys.twitter.consumer_key,
   consumer_secret: keys.twitter.consumer_secret,
   access_token_key: keys.twitter.access_token_key,
   access_token_secret: keys.twitter.access_token_secret
-}); 
-
+});
 var fnTweets = function(srch){
   if (!srch){
     srch = 'Liri Justice'
@@ -25,15 +23,15 @@ var fnTweets = function(srch){
   var params = {screen_name: srch, count: 20};
   client.get('statuses/user_timeline', params, function(error, tweets, response) {
     //console.log(tweets[0]);
+    console.log(tweets[0].created_at);
     if (!error) {
       for (var tweet in tweets)
       {             
-        console.log(srch + '@' + moment(tweets[tweet].created_at).format('LLLL') + ':    ' + tweets[tweet].text + ' ' );
+        console.log(srch + '@' + tweets[tweet].created_at + ':    ' + tweets[tweet].text + ' ' );
       }
       
     }
-  });
-  
+  });  
 };
 var fnSpot = function(srch){
 
@@ -94,7 +92,7 @@ var fnSpotErr = function(){
   
     try {
       let srch = '"The Sign"';
-    spotify.search({ type: 'track', query: srch }, 
+      spotify.search({ type: 'track', query: srch }, 
                      function(err, data) {
       if (err) {   
         console.log('Error : ' + err);
@@ -115,10 +113,42 @@ var fnSpotErr = function(){
   return;
 }
 };
-
-
 var fnMovie = function(srch){
-  console.log('Movie! ' + srch );
+  if(!srch){srch='Mr. Nobody.'};
+  request('https://www.omdbapi.com/?apikey=' + 'trilogy' + '&t=' + srch, function (error, response, body) {  
+  if(error){
+    console.log('error:', error); // Print the error if one occurred
+    return;
+  }  
+  if(response.statusCode!==200){
+    console.log('statusCode?:', response.statusCode);
+  } 
+    
+    let bdyjson = JSON.parse(body);
+    //        * Title of the movie. 
+    console.log('Title:', bdyjson.Title);
+    //        * Year the movie came out.    
+    console.log('Year:', bdyjson.Year);
+    //        * IMDB Rating of the movie.
+    console.log('IMDB Rating:', bdyjson.imdbRating);
+    //        * Rotten Tomatoes Rating of the movie.
+    for (var Rat in bdyjson.Ratings){      
+      if(bdyjson.Ratings[Rat].Source==='Rotten Tomatoes'){
+        console.log(bdyjson.Ratings[Rat].Source, bdyjson.Ratings[Rat].Value);
+        break;        
+      }
+    }
+    //        * Country where the movie was produced.
+    console.log('Country:', bdyjson.Country);
+    //        * Language of the movie.
+    console.log('Language:', bdyjson.Language);
+    //        * Plot of the movie.
+    console.log('Plot:', bdyjson.Plot);
+    //        * Actors in the movie.
+    console.log('Actors:', bdyjson.Actors);    
+    
+        
+});
 };
 var fnDoWhat = function(){
   console.log('Do What!' );
