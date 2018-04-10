@@ -27,10 +27,11 @@ var fnTweets = function(srch){
     //console.log(tweets[0].created_at);
     if (!error) {
       for (var tweet in tweets)
-      {             
-        console.log(srch + '@' + tweets[tweet].created_at + ':    ' + tweets[tweet].text + ' ' );
-      }
-      
+      {  
+        let tme = tweets[tweet].created_at;
+        let dTme = new Date(tme);     
+        console.log(srch + '@' + dTme.toLocaleString("en-US") + ':    ' + tweets[tweet].text + ' ' );
+      }      
     }
   });  
 };
